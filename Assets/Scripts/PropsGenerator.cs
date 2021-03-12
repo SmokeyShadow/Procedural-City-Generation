@@ -110,9 +110,12 @@ public class PropsGenerator : MonoBehaviour
 
     public void GenerateCar(carType type, Vector3 position, Vector3 startPos, Vector3 endPos, Quaternion rotation = default)
     {
-        GameObject go = Instantiate(cars[(int)type].carPrefab,position, rotation);
+        Vector3 pos1 = Vector3.Scale(startPos, cars[(int)type].footPrint);
+        Vector3 pos2 = Vector3.Scale(endPos, cars[(int)type].footPrint);
+
+        GameObject go = Instantiate(cars[(int)type].carPrefab, Vector3.Scale(position, cars[(int)type].footPrint), rotation);
         go.transform.localScale = new Vector3(go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z);
-        go.GetComponent<Car>().Init(startPos, endPos);
+        go.GetComponent<Car>().Init(pos1, pos2);
         instanceList.Add(go);
     }
 

@@ -6,7 +6,6 @@ public class MeshGenerator
 {
     private List<GameObject> intersections = new List<GameObject>();
     List<List<Vector3>> crossXintersections = new List<List<Vector3>>();
-    List<List<GameObject>> crossZintersections = new List<List<GameObject>>();
     private static MeshGenerator _instance;
     public static MeshGenerator Instance
     {
@@ -20,6 +19,7 @@ public class MeshGenerator
 
     public void DestroyMap()
     {
+        crossXintersections.Clear();
         intersections = new List<GameObject>();
         PropsGenerator.Instance.ClearObjs();
     }
@@ -99,7 +99,7 @@ public class MeshGenerator
         List<Vector3> list = new List<Vector3>();
         for (int i = 0; i < height; i++)
         {
-            if (i > 0)
+            if (i >= 0)
             {
                 if (list.Count > 0)
                 {
@@ -115,7 +115,7 @@ public class MeshGenerator
                 {
                     GameObject go = PropsGenerator.Instance.GenerateRoad(PropsGenerator.roadType.intersection,
                          new Vector3(pos.x, 0.2f, pos.y));
-                    list.Add(go.transform.position);
+                    list.Add(new Vector3(pos.x, 0.2f, pos.y));
                     intersections.Add(go);
                 }
                 else if (heightMap[j, i] == -2)
@@ -218,19 +218,22 @@ public class MeshGenerator
                 randLine = Random.Range(0, crossXintersections.Count);
                 count--;
             }
-            List<Vector3> intersections = new List<Vector3>();
+            List<Vector3> positions = new List<Vector3>();
             foreach (var i in crossXintersections[randLine])
-                intersections.Add(i);
-            int rand1 = Random.Range(0, intersections.Count);
-            Vector3 start = intersections[rand1];
-            intersections.RemoveAt(rand1);
-            int rand2 = Random.Range(0, intersections.Count);
-            Vector3 end = intersections[rand2];
-            intersections.RemoveAt(rand2);
+            {
+                positions.Add(i);
+            }
+            int rand1 = Random.Range(0, positions.Count);
+            Vector3 start = positions[rand1];
+            positions.RemoveAt(rand1);
+            int rand2 = Random.Range(0, positions.Count);
+            Vector3 end = positions[rand2];
+            positions.RemoveAt(rand2);
             Debug.DrawLine(start, end, Color.red , 50);
             int randCar = Random.Range(0, 10);
+
             PropsGenerator.Instance.GenerateCar((PropsGenerator.carType)randCar,
-                       new Vector3(start.x, start.y, start.z), start, end, new Quaternion(0, 0.7071f, 0, 0.7071f));
+                       start, start, end, new Quaternion(0, 0.7071f, 0, 0.7071f));
         }
     }
 
